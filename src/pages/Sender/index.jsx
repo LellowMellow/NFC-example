@@ -2,6 +2,7 @@ import React from "react";
 import Pusher from "pusher-js";
 import axios from "axios";
 import { useState, useEffect } from "react";
+import Nfc from "nfc-react-web";
 
 const Sender = () => {
   const [state, setState] = useState({
@@ -15,30 +16,16 @@ const Sender = () => {
     console.log("sender success");
   };
 
-  useEffect(() => {
-    if ("NDEFReader" in window) {
-      const ndef = new NDEFReader();
-      ndef
-        .scan()
-        .then(() => {
-          console.log("Scan started successfully.");
-          ndef.onreadingerror = () => {
-            console.log("Cannot read data from the NFC tag. Try another one?");
-          };
-          ndef.onreading = (event) => {
-            console.log("NDEF message read.");
-          };
-        })
-        .catch((error) => {
-          console.log(`Error! Scan failed to start: ${error}.`);
-        });
-    } else alert("sibal");
-  }, []);
-
   return (
     <div>
       <h1>Sender</h1>
       <button onClick={onClickFunction}>send web socket chat</button>
+      <Nfc
+        read={(data) => {
+          console.log(`Data read from tag: ${JSON.stringify(data)}`);
+        }}
+        timeout={15}
+      />
     </div>
   );
 };
